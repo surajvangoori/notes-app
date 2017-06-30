@@ -8,19 +8,48 @@ import {PropTypes} from 'prop-types';
 import {createContainer} from 'meteor/react-meteor-data';
 import NoteListHeader from './NoteListHeader';
 import NoteListItem from './NoteListItem';
+import NoteListEmptyItem from './NoteListEmptyItem';
 
 export const NoteList = (props)=>{
-    return (
+
+    return(
         <div>
             <NoteListHeader/>
-            <p>NoteList {props.notes.length}</p>
+            {props.notes.length===0 ? <NoteListEmptyItem/>:undefined}
             {
                 props.notes.map((note)=>{
-                  return <NoteListItem key={note._id} note={note}/>
-                })
+                return <NoteListItem key={note._id} note={note}/>
+                }
+                )
             }
+            <p>NoteList: {props.notes.length}</p>
         </div>
-    );
+    )
+    // if(props.notes.length !==0 )
+    // {
+    //     return (
+    //         <div>
+    //             <NoteListHeader/>
+    //             <p>NoteList: {props.notes.length}</p>
+    //             {
+    //                 props.notes.map((note)=>{
+    //                     return <NoteListItem key={note._id} note={note}/>
+    //                     }
+    //
+    //                 )
+    //             }
+    //         </div>
+    //     )
+    // }
+    // else{
+    //     return (
+    //         <div>
+    //             <NoteListHeader/>
+    //             <NoteListEmptyItem/>
+    //         </div>
+    //     )
+    // }
+
 };
 
 NoteList.propTypes ={
