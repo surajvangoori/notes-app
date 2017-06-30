@@ -4,8 +4,10 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {Accounts} from 'meteor/accounts-base';
+import {createContainer} from 'meteor/react-meteor-data';
+import {PropTypes} from 'prop-types';
 
-export default class Signup extends React.Component{
+export class Signup extends React.Component{
     constructor(props){
         super(props);
         this.state={
@@ -22,7 +24,7 @@ export default class Signup extends React.Component{
         if (password.length<9){
             return this.setState({error:'Password must be atleast 9 characters'})
         }
-        Accounts.createUser({email, password}, (err) => {
+        this.props.createUser({email, password}, (err) => {
             //console.log('Signup callback', err);
             if(err){
                 this.setState({error:err.reason})
@@ -52,3 +54,12 @@ export default class Signup extends React.Component{
 
     }
 }
+
+Signup.PropTypes={
+    createUser:PropTypes.func.isRequired
+}
+export default createContainer(()=>{
+    return{
+        createUser:Accounts.createUser
+    }
+},Signup);
