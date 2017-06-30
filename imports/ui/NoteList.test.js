@@ -7,22 +7,8 @@ import { mount } from 'enzyme';
 import { Meteor } from 'meteor/meteor';
 
 import {NoteList} from './NoteList';
-const notes=[
-    {
-      _id:'Note1',
-      title: 'Note 1 title',
-      body:'Note 1 body',
-      updatedAt: 0,
-      userId:'userId1'
-    },
-    {
-      _id:'Note2',
-      title: 'Note 2 title',
-      body:'Note 2 body',
-      updatedAt: 0,
-      userId:'userId2'
-    }
-];
+import {notes} from '../fixtures/fixtures';
+
 if (Meteor.isClient){
     describe('NoteList', function () {
 
