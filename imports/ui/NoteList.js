@@ -6,6 +6,9 @@ import {Meteor} from 'meteor/meteor';
 import {Notes} from '../api/notes';
 import {PropTypes} from 'prop-types';
 import {createContainer} from 'meteor/react-meteor-data';
+import {Session} from 'meteor/session';
+
+
 import NoteListHeader from './NoteListHeader';
 import NoteListItem from './NoteListItem';
 import NoteListEmptyItem from './NoteListEmptyItem';
@@ -25,31 +28,6 @@ export const NoteList = (props)=>{
             <p>NoteList: {props.notes.length}</p>
         </div>
     )
-    // if(props.notes.length !==0 )
-    // {
-    //     return (
-    //         <div>
-    //             <NoteListHeader/>
-    //             <p>NoteList: {props.notes.length}</p>
-    //             {
-    //                 props.notes.map((note)=>{
-    //                     return <NoteListItem key={note._id} note={note}/>
-    //                     }
-    //
-    //                 )
-    //             }
-    //         </div>
-    //     )
-    // }
-    // else{
-    //     return (
-    //         <div>
-    //             <NoteListHeader/>
-    //             <NoteListEmptyItem/>
-    //         </div>
-    //     )
-    // }
-
 };
 
 NoteList.propTypes ={
@@ -57,10 +35,18 @@ NoteList.propTypes ={
 }
 
 export default createContainer(()=>{
+    const selectedNoteId=Session.get('selectedNoteId');
+
     Meteor.subscribe('notes');
 
     return{
-        notes: Notes.find().fetch()
+        notes: Notes.find().fetch().map((note)=>{
+          //This is how you return additional data added to an existing array
+            return {
+              ...note, //using ES6 spread operator
+              selected:note._id===selectedNoteId
+            };
+        })
     }
 
 },NoteList);
