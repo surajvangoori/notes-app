@@ -7,52 +7,84 @@ import {Session} from 'meteor/session';
 import {Notes} from '../api/notes';
 import {PropTypes} from 'prop-types';
 import {Meteor} from 'meteor/meteor';
+import {browserHistory} from 'react-router';
 
-export const Editor = (props)=>{
+export class Editor extends React.Component{
+    constructor(props){
+        super(props);
+        this.state={
+            title:'',
+            body:''
+        }
+    }
 
-    function handleBodyChange(e)
+    handleBodyChange(e)
     {
-        props.call('notes.update',props.note._id, {body:e.target.value});
+        const body=e.target.value;
+        this.setState({body:body})
+        this.props.call('notes.update',this.props.note._id, {body:body});
     };
 
-    function handleTitleChange(e) {
-        props.call('notes.update',props.note._id,{title:e.target.value});
+    handleTitleChange(e) {
+        const title = e.target.value;
+        this.setState({title:title});
+        this.props.call('notes.update',this.props.note._id,{title:title});
     };
 
-    if(props.note){
-      //Note Exists
-      return(
-           <div>
-               <input value={props.note.title}
-                      placeholder="Enter a title"
-                      onChange={handleTitleChange.bind(this)}/>
+    handleRemoval(){
+        this.props.call('notes.remove',this.props.note._id);
+        this.props.browserHistory.push('/dashboard');
+    }
 
-               <textarea value={props.note.body}
-                         placeholder="Enter a note"
-                         onChange={handleBodyChange.bind(this)}></textarea>
-               <button>Delete Note</button>
-           </div>
-      )
-    }else{
-      return(
-        <div>
-            {props.selectedNoteId ? 'Note not found':'Pick or create a Note'}
-        </div>
-      )
+    componentDidUpdate(prevProps, prevState) {
+        const currentNoteId = this.props.note ? this.props.note._id : undefined;
+        const prevNoteId = prevProps.note ? prevProps.note._id : undefined;
+
+        if (currentNoteId && currentNoteId!== prevNoteId){
+            this.setState({
+                title: this.props.note.title,
+                body: this.props.note.body
+            });
+        }
+    }
+    render() {
+        if (this.props.note) {
+            //Note Exists
+            return (
+                <div>
+                    <input value={this.state.title}
+                           placeholder="Enter a title"
+                           onChange={this.handleTitleChange.bind(this)}/>
+
+                    <textarea value={this.state.body}
+                              placeholder="Enter a note"
+                              onChange={this.handleBodyChange.bind(this)}></textarea>
+                    <button onClick={this.handleRemoval.bind(this)}>Delete Note</button>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.props.selectedNoteId ? 'Note not found' : 'Pick or create a Note'}
+                </div>
+            )
+        }
     }
 };
 
 Editor.propTypes ={
     note:PropTypes.object,
-    seletedNoteId:PropTypes.string
+    seletedNoteId:PropTypes.string,
+    call:PropTypes.func.isRequired,
+    browserHistory:PropTypes.object.isRequired
 }
 
 export default createContainer(()=>{
     const selectedNoteId = Session.get('selectedNoteId');
-
     return{
        selectedNoteId:selectedNoteId,
        note: Notes.findOne(selectedNoteId),
-       call: Meteor.call
+       call: Meteor.call,
+       browserHistory
     };
 },Editor)
