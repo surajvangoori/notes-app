@@ -5,9 +5,9 @@ import React from 'react';
 
 const NoteListEmptyItem = ()=>{
     return (
-        <div>
+        <p className="empty-item">
             No Notes to display, create one.
-        </div>
+        </p>
     )
 };
 
