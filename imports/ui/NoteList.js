@@ -40,7 +40,7 @@ export default createContainer(()=>{
     Meteor.subscribe('notes');
 
     return{
-        notes: Notes.find().fetch().map((note)=>{
+        notes: Notes.find({},{sort:{updatedAt:-1}}).fetch().map((note)=>{
           //This is how you return additional data added to an existing array
             return {
               ...note, //using ES6 spread operator
